@@ -13,8 +13,10 @@
  const handler = {};
 
 // main functions or objects.
- handler.notFoundHandler = ()=>{
-     console.log('Url Not Found');
+ handler.notFoundHandler = (requestProperties , callback)=>{
+     callback(404, {
+         message: 'Your requested URL was not found'
+     })
  }
  
  
