@@ -10,6 +10,26 @@
  const http = require('http');
 const {handleReqRes} = require('./helpers/handleReqRes');
 const environment = require('./helpers/environments')
+
+// TODO: testing crud (remove later);
+// const data = require('./lib/data')
+
+// data.create('test', 'myFile3',  {name: 'Bangladesh', capital: 'dhaka'}, (err)=>{
+//     console.log(`Error was`, err);
+// } )
+
+// data.read('test', 'myFile', (err, data)=>{
+//     console.log(err, data);
+// })
+
+// data.update('test', 'myFile', 'new updated file', (err)=>{
+//     console.log(err);
+// })
+
+// data.delete('test', 'myFile', (err)=>{
+//     console.log(err);
+// })
+
 // App object or Module scaffolding.
 const app = {}; 
 
