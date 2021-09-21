@@ -63,10 +63,21 @@ const {notFoundHandler} = require('../handlers/routeHandlers/notFoundHandler')
     req.on('end', ()=>{
         realData += decoder.end();
 
+        chosenHandler(requestProperties, (statusCode, payload)=>{
+            statusCode = typeof(statusCode) === 'number' ? statusCode : 500;
+            payload = typeof(payload) === 'object' ? payload : {};
+    
+            const payloadString = JSON.stringify(payload);
+    
+            // return the final response
+            res.writeHead(statusCode);
+            // console.log(realData);
+            res.end();
+        })
+
         // Response handle
         // res.end('Hello World')
-        // log the payload
-        console.log(realData);
+        
     })
 }
  
