@@ -44,17 +44,6 @@ const {notFoundHandler} = require('../handlers/routeHandlers/notFoundHandler')
     // Chose which endpoint will fire
     const chosenHandler = routes[trimmedPath] ? routes[trimmedPath] : notFoundHandler;
 
-    // Call the chosen handler
-    chosenHandler(requestProperties, (statusCode, payload)=>{
-        statusCode = typeof(statusCode) === 'number' ? statusCode : 500;
-        payload = typeof(payload) === 'object' ? payload : {};
-
-        const payloadString = JSON.stringify(payload);
-
-        // return the final response
-        res.writeHead(statusCode);
-        res.end(payloadString);
-    })
 
     req.on('data', (buffer)=>{
         realData += decoder.write(buffer);
@@ -62,23 +51,22 @@ const {notFoundHandler} = require('../handlers/routeHandlers/notFoundHandler')
 
     req.on('end', ()=>{
         realData += decoder.end();
-
+        // Call the chosen handler
         chosenHandler(requestProperties, (statusCode, payload)=>{
             statusCode = typeof(statusCode) === 'number' ? statusCode : 500;
             payload = typeof(payload) === 'object' ? payload : {};
-    
+
             const payloadString = JSON.stringify(payload);
-    
-            // return the final response
+
+            res.setHeader('Content-Type', 'Application/json')
+            //return the final response
             res.writeHead(statusCode);
-            // console.log(realData);
-            res.end();
+            res.end(payloadString)
+
         })
 
-        // Response handle
-        // res.end('Hello World')
-        
     })
+
 }
  
  
