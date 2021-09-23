@@ -53,6 +53,7 @@ const {parseJSON} = require('../helpers/utilities')
         realData += decoder.end();
 
         //Attach real data with request properties body
+        // Parse JSON function will prevent crushing from invalid data posting from clients.
         requestProperties.body = parseJSON(realData);
 
         // Call the chosen handler
