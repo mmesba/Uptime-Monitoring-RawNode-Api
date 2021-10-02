@@ -15,12 +15,14 @@ const environments = {}
 // main functions or objects.
 environments.staging = {
     port: 3000,
-    envName : 'staging'
+    envName : 'staging',
+    secretKey: 'This_is_very_secret, you have to provide your own & this should not be exposed anywhere'
 } 
 
 environments.production = {
     port: 5000,
-    envName : 'production'
+    envName : 'production',
+    secretKey:  'This_is_very_secret, you have to provide your own & this should not be exposed anywhere'
 } 
  
  // Determine which environment was passed.
