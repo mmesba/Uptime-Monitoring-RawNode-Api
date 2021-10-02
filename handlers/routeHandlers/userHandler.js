@@ -7,8 +7,8 @@
  */
  
 // Dependencies.
- const data = require('../lib/data');
-const {hash} = require('../helpers/utilities')
+ const data = require('../../lib/data');
+const {hash} = require('../../helpers/utilities')
  
 // App object or Module scaffolding.
 const handler = {};
@@ -41,7 +41,6 @@ handler._users.post = (requestProperties, callback)=>{
 
     if (firstName && lastName && phone && password && tosAgreement) {
         // Make sure that user doesn't already exists or not;
-        // ... will be continued....
         data.read('users', phone, (err1, user)=>{
             if (err1) {
                 let userObject = {
@@ -77,7 +76,8 @@ handler._users.post = (requestProperties, callback)=>{
 };
 
 handler._users.get = (requestProperties, callback)=>{
-callback(200, {
+    // ... will be continued....
+    callback(200, {
     message: 'ok'
 })
 }

@@ -8,7 +8,7 @@
  
 // Dependencies.
  const {sampleHandler} = require('./handlers/routeHandlers/sampleHandler');
-const {userHandler} = require('./handlers/userHandler')
+const {userHandler} = require('./handlers/routeHandlers/userHandler')
  
 // App object or Module scaffolding.
 
