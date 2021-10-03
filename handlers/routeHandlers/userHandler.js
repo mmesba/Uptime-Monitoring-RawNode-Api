@@ -103,16 +103,15 @@ handler._users.get = (requestProperties, callback)=>{
 }
 
 handler._users.put = (requestProperties, callback)=>{
-    // ... will be continued....
     // Check the phone number is valid and proceed..
     const phone = typeof(requestProperties.body.phone) === 'string' && requestProperties.body.phone.trim().length === 11 ? requestProperties.body.phone : false;
-
+    
     const firstName = typeof(requestProperties.body.firstName) === 'string' && requestProperties.body.firstName.trim().length > 0 ? requestProperties.body.firstName : false;
-
+    
     const lastName = typeof(requestProperties.body.lastName) === 'string' && requestProperties.body.lastName.trim().length > 0 ? requestProperties.body.lastName  : false;
-
+    
     const password = typeof(requestProperties.body.password) === 'string' && requestProperties.body.password.trim().length > 0 ? requestProperties.body.password : false;
-
+    
     if (phone) {
         if (firstName || lastName || password) {
             // Match the provided phone with database
@@ -121,7 +120,7 @@ handler._users.put = (requestProperties, callback)=>{
                 const userData = {...parseJSON(uData)}
                 if (!err1 && userData) {
                     if (firstName) {
-                    userData.firstName = firstName;
+                        userData.firstName = firstName;
                     }                    
                     if (lastName) {
                         userData.lastName = lastName;
@@ -129,7 +128,7 @@ handler._users.put = (requestProperties, callback)=>{
                     if (password) {
                         userData.password = hash(password);
                     }
-
+                    
                     // Update user data and save to database
                     data.update('users', phone, userData, (err2)=>{
                         if (!err2) {
@@ -161,9 +160,38 @@ handler._users.put = (requestProperties, callback)=>{
 }
 
 handler._users.delete = (requestProperties, callback)=>{
-
+    // Check the phone number existed in database
+    const phone = typeof(requestProperties.queryStringObject.phone) === 'string' && requestProperties.queryStringObject.phone.trim().length === 11 ? requestProperties.queryStringObject.phone : false;
+    
+    // If phone is valid then proceed otherwise throw error
+    if (phone) {
+        // Lookup the user based on valid phone
+        data.read('users', phone , (err1, userData)=>{
+            if (!err1 && userData) {
+                data.delete('users', phone, (err2)=>{
+                    if (!err2) {
+                        callback(200, {
+                            message: 'User Deleted Successfully!'
+                        })
+                    }else{
+                        callback(500, {
+                            error: 'There was a server side error!'
+                        })
+                    }
+                })
+            }else{
+                callback(500, {
+                    error: 'There was a server side problem!'
+                })
+            }
+        })
+    } else{
+        callback(400, {
+            error: 'There was a problem in your request!'
+        })
+    }
 }
- 
+// TODO:  // ... will be continued....
+
 // export the module.
- module.exports = handler;
- 
+module.exports = handler;
