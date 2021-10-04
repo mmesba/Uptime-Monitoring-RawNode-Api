@@ -37,6 +37,24 @@ const environments = require('./environments');
          return false;
      }
  }
+
+
+ // Random string generator function
+ utilities.createRandomString = (str) =>{
+    let string = str;
+    string = typeof(str) === 'number' && str > 0 ? str : false;
+    if (string) {
+        let possibleCharacter = 'AbcDefGhijkLmnOPqRSTuvwxyz1234567890';
+        let output = '';
+        for(let i = 1; i <= string; i++){
+            let randomCharacter = possibleCharacter.charAt(Math.floor(Math.random() * possibleCharacter.length));
+            output += randomCharacter;
+        }
+        return output;
+
+    }else{
+    return false;}
+}
  
 // export the module.
  module.exports = utilities;
