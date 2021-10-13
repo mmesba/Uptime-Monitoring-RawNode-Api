@@ -133,7 +133,27 @@
 
  // Delete Token
  handler._token.delete = (requestProperties, callback)=>{
+    // Check the token is valid or not
+    const id = typeof(requestProperties.queryStringObject.id) === 'string' && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id : false;
 
+    if (id) {
+        data.read('tokens', id, (err1, tokenData)=>{
+            if (!err1 && tokenData) {
+                // Delete the token from database
+                data.delete('tokens', id, (err2)=>{
+                    callback(200, {
+                        error: 'Token Deleted Successfully!'
+                    })
+                })
+            } else {
+                callback(500, {
+                    error: 'There was a server side error!'
+                })
+            }
+        })
+    }else{
+        error: 'There was a server side error!'
+    }
  }
  
  
