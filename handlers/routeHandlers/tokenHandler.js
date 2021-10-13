@@ -94,7 +94,41 @@
 
  // Update Token
  handler._token.put = (requestProperties, callback)=>{
+    const id = typeof(requestProperties.body.id)=== 'string' && requestProperties.body.id.trim().length === 20 ? requestProperties.body.id : false;
 
+    const extend = typeof(requestProperties.body.extend) === 'boolean' && requestProperties.body.extend == true ? true : false;
+
+    // Check if the id and extend property existed
+    if (id && extend) {
+        // Read token folder and check the validity of token
+        data.read('tokens', id, (err1, tokenData)=>{
+            let tokenObject = {...parseJSON(tokenData)};
+            if(tokenObject.expires > Date.now()){
+                // Extend the lifetime of a token or add another 1 hour for token expire.
+                tokenObject.expires = Date.now() + (60 * 60 * 1000);
+                // Update new data to database;
+                data.update('tokens', id, tokenObject, (err2)=>{
+                    if (!err2) {
+                        callback(200, {
+                            message: 'Token Successfully Updated!'
+                        })
+                    } else {
+                        callback(500, {
+                            error: 'There was a server side error!'
+                        })
+                    }
+                })
+            } else {
+                callback(400, {
+                    error: 'Token already expired!'
+                })
+            }
+        })
+    }else{
+        callback(404, {
+            error: 'There was a problem in your request!'
+        })
+    }
  }
 
  // Delete Token
