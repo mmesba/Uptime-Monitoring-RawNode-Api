@@ -69,9 +69,27 @@
 
  // Read Token
  handler._token.get = (requestProperties, callback) =>{
-    callback(200, {
-        ok: 'ok'
-    })
+   // Check the token id is valid or not
+   const id = typeof(requestProperties.queryStringObject.id) === 'string' && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id : false;
+
+   if (id) {
+       // Lookup the token
+       data.read('tokens', id, (err, tokenData)=>{
+           // Copy the function parameter with parsing the raw data.
+           const token = {... parseJSON(tokenData)};
+           if (!err && token) {
+               callback(200, token)
+           }else{
+               callback(404, {
+                   error: 'Requested token was not found'
+               })
+           }
+       })
+   } else{
+       callback(404, {
+           error:" Requested token is not valid"
+       })
+   }
  }
 
  // Update Token
