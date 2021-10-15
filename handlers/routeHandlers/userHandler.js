@@ -10,6 +10,7 @@
  const data = require('../../lib/data');
 const {hash} = require('../../helpers/utilities')
 const {parseJSON} = require('../../helpers/utilities');
+const tokenHandler = require('./tokenHandler')
  
 // App object or Module scaffolding.
 const handler = {};
@@ -81,7 +82,12 @@ handler._users.get = (requestProperties, callback)=>{
     const phone = typeof(requestProperties.queryStringObject.phone) === 'string' && requestProperties.queryStringObject.phone.trim().length === 11 ? requestProperties.queryStringObject.phone : false;
     
     if (phone) {
-        // If requested phone existed then Lookup the user details
+        // Token Verifier Checkpoint
+        const token = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false;
+
+        tokenHandler._token.verify(token, phone, (tokenId)=>{
+            if (tokenId) {
+                        // If requested phone existed then Lookup the user details
         data.read('users', phone, (err, user)=>{
             // Parse string user data from  database and give user valid object.
             const userData = {...parseJSON(user)};
@@ -95,6 +101,14 @@ handler._users.get = (requestProperties, callback)=>{
                 })
             }
         })
+            } else {
+                callback(403, {
+                    error: 'Authentication failure!'
+                })
+            }
+        })
+
+
     }else{
         callback(404, {
             error: 'Requested user is not found!'
