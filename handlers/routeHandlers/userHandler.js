@@ -128,20 +128,27 @@ handler._users.put = (requestProperties, callback)=>{
     
     if (phone) {
         if (firstName || lastName || password) {
-            // Match the provided phone with database
-            data.read('users', phone, (err1, uData)=>{
-                // Parse raw json into valid object then manipulate. Because we cannot modify rew JSON.
-                const userData = {...parseJSON(uData)}
-                if (!err1 && userData) {
-                    if (firstName) {
-                        userData.firstName = firstName;
-                    }                    
-                    if (lastName) {
-                        userData.lastName = lastName;
-                    }
-                    if (password) {
-                        userData.password = hash(password);
-                    }
+
+              // Token Verifier Checkpoint
+        const token = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false;
+
+        tokenHandler._token.verify(token, phone, (tokenId)=>{
+            if (tokenId) {
+                        // If requested phone existed then Lookup the user details
+                           // Match the provided phone with database
+                data.read('users', phone, (err1, uData)=>{
+                    // Parse raw json into valid object then manipulate. Because we cannot modify rew JSON.
+                    const userData = {...parseJSON(uData)}
+                    if (!err1 && userData) {
+                        if (firstName) {
+                            userData.firstName = firstName;
+                        }                    
+                        if (lastName) {
+                            userData.lastName = lastName;
+                        }
+                        if (password) {
+                            userData.password = hash(password);
+                        }
                     
                     // Update user data and save to database
                     data.update('users', phone, userData, (err2)=>{
@@ -161,6 +168,12 @@ handler._users.put = (requestProperties, callback)=>{
                     })
                 }
             })
+             } else {
+                callback(403, {
+                    error: 'Authentication failure!'
+                })
+            }
+        })
         } else{
             callback(400, {
                 error: 'You have a problem in your request!'
@@ -179,7 +192,14 @@ handler._users.delete = (requestProperties, callback)=>{
     
     // If phone is valid then proceed otherwise throw error
     if (phone) {
-        // Lookup the user based on valid phone
+
+            // Token Verifier Checkpoint
+            const token = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false;
+
+            tokenHandler._token.verify(token, phone, (tokenId)=>{
+                if (tokenId) {
+                            // If requested phone existed then Lookup the user details
+                            // Lookup the user based on valid phone
         data.read('users', phone , (err1, userData)=>{
             if (!err1 && userData) {
                 data.delete('users', phone, (err2)=>{
@@ -199,13 +219,19 @@ handler._users.delete = (requestProperties, callback)=>{
                 })
             }
         })
+                } else {
+                    callback(403, {
+                        error: 'Authentication failure!'
+                    })
+                }
+            })
+
     } else{
         callback(400, {
             error: 'There was a problem in your request!'
         })
     }
 }
-// TODO:  // ... will be continued....
 
 // export the module.
 module.exports = handler;
