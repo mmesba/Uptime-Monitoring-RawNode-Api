@@ -18,7 +18,7 @@ const routes   = {
     'sample': sampleHandler,
     'user': userHandler,
     'token': tokenHandler,
-    'checkHandler': checkHandler
+    'check': checkHandler
 } 
 // main functions or objects.
  module.exports = routes;
