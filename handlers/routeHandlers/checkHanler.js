@@ -235,7 +235,77 @@ const tokenHandler = require('./tokenHandler');
 }
 
 handler._check.delete = (requestProperties, callback)=>{
-      
+  const id = typeof(requestProperties.queryStringObject.id) === 'string' && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id : false;
+   
+
+      if (id) {
+        // Lookup the check 
+        data.read('checks', id, (err1, checkData)=>{
+          if (!err1 && checkData) {
+            const token = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false;
+
+            tokenHandler._token.verify(token, parseJSON(checkData).userPhone, (tokenIsValid)=>{
+              if (tokenIsValid) {
+                // Delete the check data
+                data.delete('checks', id, (err2)=>{
+                  if (!err2) {
+                    // Remove the checks instance from user data;
+                    data.read('users', parseJSON(checkData).userPhone, (err3, userData)=>{
+                      let userObject = parseJSON(userData)
+                      if (!err3 && userData) {
+                        let userChecks = typeof(userObject.checks) === 'object' && userObject.checks instanceof Array ? userObject.checks : []; 
+                        // remove the deleted check id from user checks
+                        let checkPosition = userChecks.indexOf(id);
+                        if (checkPosition > -1) {
+                          userChecks.splice(checkPosition, 1);
+                          // update the user data
+                          userObject.checks = userChecks;
+                          data.update('users', userObject.phone, userObject, (err4)=>{
+                            if (!err4) {
+                              callback(200, {
+                                message: 'Check deleted successfully!'
+                              })
+                            } else {
+                              callback(500 , {
+                                error: 'There was a problem in server side!'
+                              })  
+                            }
+                          })
+                        } else {
+                          callback(500, {
+                            error: 'Check id that you are trying to remove is not found in user!'
+                          })
+                        }
+                      } else {
+                        callback(500, {
+                          error: 'There was a problem in server side!'
+                        })
+                      }
+                    })
+                  } else {
+                    callback(500, {
+                      error: 'There was a problem in server side!'
+                    })
+                  }
+                })
+              } else {
+                callback(403, {
+                  error: 'Authentication failure!'
+                })
+              }
+            })
+
+          } else{
+            callback(400, {
+              error: 'You have a problem in your request!f'
+            })
+          }
+        })
+      } else {
+        callback(400, {
+          error: 'You have a problem in your request!'
+        })
+      }
 }
  
  
