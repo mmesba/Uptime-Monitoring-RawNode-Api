@@ -8,7 +8,7 @@
  
 // Dependencies.
 const server = require('./lib/server');
-const workers = require('./lib/worker');
+const worker = require('./lib/worker');
 
 // App object or Module scaffolding.
 const app = {}
@@ -17,7 +17,7 @@ app.init = ()=>{
     // Start the server
     server.init()
     // Start the worker 
-    // 
+    worker.init();
 };
 
 app.init();
