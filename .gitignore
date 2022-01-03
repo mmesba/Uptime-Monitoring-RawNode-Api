@@ -3,6 +3,7 @@ test
 users
 tokens
 checks
+https
 
 # Logs
 .logs
