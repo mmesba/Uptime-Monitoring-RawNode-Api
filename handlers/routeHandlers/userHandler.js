@@ -8,7 +8,7 @@
  
 // Dependencies.
  const data = require('../../lib/data');
-const {hash} = require('../../helpers/utilities')
+const {hash, getTemplate} = require('../../helpers/utilities')
 const {parseJSON} = require('../../helpers/utilities');
 const tokenHandler = require('./tokenHandler')
  
@@ -16,6 +16,34 @@ const tokenHandler = require('./tokenHandler')
 const handler = {};
  
 // main functions or objects.
+/*
+* HTML handler
+*/
+handler.index = (data, callback)=>{
+    // Reject any request that isn't a GET
+    if(data.method == 'get'){
+        // Read in a template as a string
+        getTemplate('index', (err, str)=>{
+            if (!err && str) {
+                callback(200, str, 'html') 
+              } else {
+                 callback(500, undefined, 'html')
+             }
+        })
+    }else{
+        callback(405, undefined, 'html')
+    }
+
+}
+
+
+
+
+/**
+ * JSON API handlers
+ * 
+ */
+
  handler.userHandler = (requestProperties, callback)=>{
     // Check which method is requested by user and response according to that.
     const acceptedMethods = ['get', 'post', 'put', 'delete'];
