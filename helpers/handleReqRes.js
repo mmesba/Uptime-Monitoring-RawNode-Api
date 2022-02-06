@@ -57,14 +57,28 @@ const {parseJSON} = require('../helpers/utilities')
         requestProperties.body = parseJSON(realData);
 
         // Call the chosen handler
-        chosenHandler(requestProperties, (statusCode, payload)=>{
-            statusCode = typeof(statusCode) === 'number' ? statusCode : 500;
+        chosenHandler(requestProperties, (statusCode, payload, contentType)=>{
+
+            // Determine the type of response (fallback to JSON)
+            contentType = typeof(contentType) == 'string'  ? contentType : 'json';
+
+            statusCode = typeof(statusCode) === 'number' ? statusCode : 200;
+
+            // Return the response parts that are content-specific
+            let payloadString = '';
+            if(contentType == 'json'){
+            res.setHeader('Content-Type', 'Application/json');
             payload = typeof(payload) === 'object' ? payload : {};
+            payloadString = JSON.stringify(payload);
 
-            const payloadString = JSON.stringify(payload);
+            }
+            if(contentType == 'html'){
+            res.setHeader('Content-Type', 'text/html');
+            payloadString = typeof(payload) == 'string' ? payload : '';
 
-            res.setHeader('Content-Type', 'Application/json')
-            //return the final response
+            }
+
+            // Return the response parts that are common to all content types
             res.writeHead(statusCode);
             res.end(payloadString)
 

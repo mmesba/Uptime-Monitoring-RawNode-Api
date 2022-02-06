@@ -8,17 +8,26 @@
  
 // Dependencies.
  const {sampleHandler} = require('./handlers/routeHandlers/sampleHandler');
-const {userHandler} = require('./handlers/routeHandlers/userHandler');
+const {userHandler, index} = require('./handlers/routeHandlers/userHandler');
 const { tokenHandler } = require('./handlers/routeHandlers/tokenHandler');
 const { checkHandler } = require('./handlers/routeHandlers/checkHanler');
  
 // App object or Module scaffolding.
 
 const routes   = {
+    '' : index,
+    // 'account/create' : createHandler,
+    // 'account/edit' : editHandler,
+    // 'account/deleted' : deletedHandler,
+    // 'session/create' : sessionCreateHandler,
+    // 'session/deleted' : sessionDeletedHandler,
+    // 'checks/all' : checkListHandler,
+    // 'checks/create' : checksCreateHandler,
+    // 'checks/edit' : checksEditHandler,
     'sample': sampleHandler,
-    'user': userHandler,
-    'token': tokenHandler,
-    'check': checkHandler
+    'api/user': userHandler,
+    'api/token': tokenHandler,
+    'api/check': checkHandler
 } 
 // main functions or objects.
  module.exports = routes;
